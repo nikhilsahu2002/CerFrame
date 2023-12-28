@@ -1,5 +1,5 @@
 import "./App.css";
-import { getDatabase, ref, set } from "firebase/database";
+import { get, getDatabase, ref, set } from "firebase/database";
 import { app } from "./Firebase";
 
 const db = getDatabase(app);
@@ -7,10 +7,13 @@ function App() {
   const putData = () => {
     set(ref(db, "user/Nikhil"), {
       id: 1,
-      name: "Nikhil",
+      name: "Nikhil Sahu",
       age: 21,
     });
     console.log("dataSend");
+  };
+  const getData = () => {
+    get(ref());
   };
   return (
     <>
