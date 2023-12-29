@@ -5,6 +5,8 @@ import cvsign from "../assets/cv.png";
 import { db } from "../Firebase";
 
 import { collection, getDocs, where } from "firebase/firestore";
+import { Link } from "react-router-dom";
+import LoginPage from "../auth/LoginPage";
 
 export default function Certificate() {
   const [show, setShow] = useState(false);
@@ -96,6 +98,13 @@ export default function Certificate() {
         </div>
       ) : (
         <div className="bg-gray-800 h-screen">
+          <div className="nav bg-black p-5 text-white">
+            <h3>Home</h3>
+            <Link to="/login">
+              {" "}
+              <h3>Login</h3>
+            </Link>
+          </div>
           <h1 className="flex justify-center text-3xl text-purple-700 font-sans pt-5">
             WELCOME TO UNITED UNIVERTY
           </h1>

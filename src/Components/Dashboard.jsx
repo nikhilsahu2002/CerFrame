@@ -48,13 +48,13 @@ export default function Dashboard() {
       <h2>Welcome, {user ? user.email : "Guest"}</h2>
       <button onClick={handleSignOut}>Sign Out</button>
 
-      <div className="button pt-5">
+      {/* <div className="button pt-5">
         <h3
           onClick={() => (submitForm, setSubmitted(false), setShow(true))}
           className="border-2 flex text-lg justify-center rounded-md bg-white cursor-pointer">
           Submited
         </h3>
-      </div>
+      </div> */}
     </div>
   );
 }
