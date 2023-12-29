@@ -1,26 +1,28 @@
-import "./App.css";
-import { get, getDatabase, ref, set } from "firebase/database";
-import { app } from "./Firebase";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import LoginPage from "./auth/LoginPage";
+import { useAuth } from "./Context/AuthContext";
+import Dashboard from "./Components/Dashboard";
+import Certificate from "./Components/Certificate";
 
-const db = getDatabase(app);
 function App() {
-  const putData = () => {
-    set(ref(db, "user/Nikhil"), {
-      id: 1,
-      name: "Nikhil Sahu",
-      age: 21,
-    });
-    console.log("dataSend");
-  };
-  const getData = () => {
-    get(ref());
-  };
+  const { user } = useAuth();
   return (
-    <>
-      <div>
-        <h1 onClick={putData}>Hello World !!!!</h1>
-      </div>
-    </>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={user ? <Navigate to="/dashboard" /> : <Certificate />}
+        />
+        {!user && <Route path="/login" element={<LoginPage />} />}
+        {user && <Route path="/dashboard" element={<Dashboard />} />}
+      </Routes>
+    </Router>
   );
 }
 
