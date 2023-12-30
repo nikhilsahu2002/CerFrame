@@ -98,11 +98,11 @@ export default function Certificate() {
         </div>
       ) : (
         <div className="bg-gray-800 h-screen">
-          <div className="nav bg-black p-5 text-white">
+          <div className="nav bg-black p-5 text-white flex justify-between">
             <h3>Home</h3>
             <Link to="/login">
               {" "}
-              <h3>Login</h3>
+              <h3 className="pr-3">Login</h3>
             </Link>
           </div>
           <h1 className="flex justify-center text-3xl text-purple-700 font-sans pt-5">
