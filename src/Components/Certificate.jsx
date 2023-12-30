@@ -3,6 +3,8 @@ import ayushSign from "../assets/ay.png";
 import PrasantSign from "../assets/ps.png";
 import cvsign from "../assets/cv.png";
 import { db } from "../Firebase";
+import homeimg from "../assets/About.jpg";
+import "animate.css";
 
 import { collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
@@ -97,8 +99,65 @@ export default function Certificate() {
           </div>
         </div>
       ) : (
-        <div className="bg-gray-800 h-screen">
-          <div className="nav bg-black p-5 text-white flex justify-between">
+        <div
+          className="bg-gray-800 h-screen"
+          style={{
+            backgroundImage: `url(${homeimg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}>
+          <div className="left flex items-center h-screen justify-center animate__animated animate__fadeInLeft animate__slow	2s">
+            <a class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-center text-gray-900 dark:text-white">
+                WELCOME TO UNITED UNIVERTY
+              </h5>
+              <p class="mb-2 text-lg tracking-tight text-center text-gray-900 dark:text-white">
+                {" "}
+                Certificates Center
+              </p>
+              <p class="font-normal text-gray-700 dark:text-gray-400 text-justify">
+                This dedicated page is exclusively designed for students who
+                have demonstrated outstanding commitment and successfully
+                completed their enriching summer internship at United
+                University.Here, these accomplished individuals can conveniently
+                access and view their certificates, providing them with a
+                seamless and efficient way to officially certify and celebrate
+                their remarkable achievement in the program.
+              </p>
+
+              <label
+                htmlFor="certificateId"
+                className="block text-sm font-medium text-white">
+                Certificate ID
+              </label>
+              <input
+                type="text"
+                id="certificateId"
+                className="mt-1 p-2 border border-blue-300  rounded-md w-full hover:border-blue-700 "
+                value={Id}
+                onChange={(e) => {
+                  setId(e.target.value);
+                }}
+              />
+              {showError && (
+                <p className="text-red-700">Error: Invalid Certificate ID.</p>
+              )}
+
+              <div className="button pt-5">
+                <h3
+                  onClick={() => getData(Id)}
+                  className="border-2 flex text-lg p-2 justify-center rounded-full hover:bg-blue-700 hover:text-white bg-black text-white cursor-pointer">
+                  Submited
+                </h3>
+              </div>
+              <Link to="/login">
+                {" "}
+                <h3 className="pr-3 text-center">Login</h3>
+              </Link>
+            </a>
+          </div>
+
+          {/* <div className="nav bg-black p-5 text-white flex justify-between">
             <h3>Home</h3>
             <Link to="/login">
               {" "}
@@ -153,7 +212,7 @@ export default function Certificate() {
                 </h3>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       )}
     </div>
