@@ -23,8 +23,8 @@ export default function Dashboard() {
   const [editingId, setEditingId] = useState(null);
   const nav = useNavigate();
   const [profile, setprofile] = useState(true);
-  const [deleted, setDeleted] = useState(false);
   const [Update, setUpdate] = useState(false);
+  const [Errors, SetErrors] = useState("");
 
   const handleSignOut = async () => {
     try {
@@ -44,16 +44,27 @@ export default function Dashboard() {
 
   const submitForm = async () => {
     try {
-      if (editingId) {
-        await updateCertificate(editingId, { UUID: uuid, Name: name });
-        setEditingId(null);
+      const existingData = certificateData.find((item) => item.UUID === uuid);
+
+      if (existingData) {
+        SetErrors("UUID Already Exists");
+        console.log(
+          "Data with the same UUID already exists. Update prevented.",
+        );
+        // You can optionally show a message or handle it as needed
       } else {
-        const docRef = await addDoc(collection(db, "Certificate"), {
-          UUID: uuid,
-          Name: name,
-        });
-        console.log("Document written with ID: ", docRef.id);
-        setUpdate(true);
+        if (editingId) {
+          await updateCertificate(editingId, { UUID: uuid, Name: name });
+          setEditingId(null);
+        } else {
+          const docRef = await addDoc(collection(db, "Certificate"), {
+            UUID: uuid,
+            Name: name,
+          });
+          console.log("Document written with ID: ", docRef.id);
+          setUpdate(true);
+          getData();
+        }
       }
 
       setuuid("");
@@ -84,6 +95,7 @@ export default function Dashboard() {
         prevData.filter((item) => item.id !== id),
       );
       setDeleted(true);
+      SetErrors("Item has been deleted.");
       console.log("Document successfully deleted!");
     } catch (error) {
       console.error("Error deleting document: ", error);
@@ -98,12 +110,16 @@ export default function Dashboard() {
 
   const updateCertificate = async (id, updatedData) => {
     const certificateRef = doc(db, "Certificate", id);
+
     try {
       await updateDoc(certificateRef, updatedData);
       console.log("Document successfully updated!");
       setUpdate(true);
+      getData();
     } catch (error) {
       console.error("Error updating document: ", error);
+      setUpdate(false);
+      SetErrors("INVALID ID");
     }
   };
 
@@ -113,6 +129,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     setTimeout(() => {
+      SetErrors("");
       setUpdate(false);
       setDeleted(false);
     }, 10000);
@@ -136,56 +153,59 @@ export default function Dashboard() {
           </a>
           <a
             href="#"
-            onClick={() => setprofile(false)}
+            onClick={() => (setprofile(false), setUpdate(false))}
             class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
             Student Details
           </a>
         </div>
       </div>
-      <div className="toaster flex justify-end pr-5 ">
-        {deleted && (
-          <div className="continerToast fixed z-50">
-            <div
-              id="toast-danger"
-              class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
-              role="alert">
-              <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
-                <svg
-                  class="w-5 h-5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20">
-                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
-                </svg>
-                <span class="sr-only">Error icon</span>
+      <h1>
+        <div className="toaster flex justify-end pr-5 ">
+          {Errors && (
+            <div className="continerToast fixed z-50">
+              <div
+                id="toast-danger"
+                class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+                role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+                  <svg
+                    class="w-5 h-5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+                  </svg>
+                  <span class="sr-only">Error icon</span>
+                </div>
+                <div class="ms-3 text-sm font-normal">{Errors}</div>
+                <button
+                  type="button"
+                  class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+                  data-dismiss-target="#toast-danger"
+                  aria-label="Close">
+                  <span class="sr-only">Close</span>
+                  <svg
+                    class="w-3 h-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 14">
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                    />
+                  </svg>
+                </button>
               </div>
-              <div class="ms-3 text-sm font-normal">Item has been deleted.</div>
-              <button
-                type="button"
-                class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
-                data-dismiss-target="#toast-danger"
-                aria-label="Close">
-                <span class="sr-only">Close</span>
-                <svg
-                  class="w-3 h-3"
-                  onClick={() => setDeleted(false)}
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14">
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
-              </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      </h1>
+      <div className="toaster flex justify-end pr-5 ">
         {Update && (
           <div className="continerToast fixed z-50">
             <div
@@ -286,8 +306,16 @@ export default function Dashboard() {
           {editingId && (
             <div className="CerInfo pt-8 ">
               <div className="heading text-center flex justify-center ">
-                <h1 className="text-xl font-semibold p-1">
+                <h1 className="text-xl flex font-semibold p-1 items-center gap-5">
                   Update Certificate{" "}
+                  <img
+                    width="30"
+                    height="30"
+                    onClick={() => setEditingId(null)}
+                    src="https://img.icons8.com/color/48/multiply.png"
+                    alt="multiply"
+                    className="cursor-pointer"
+                  />
                 </h1>
               </div>
               <div class="max-w-sm mx-auto mt-4">
