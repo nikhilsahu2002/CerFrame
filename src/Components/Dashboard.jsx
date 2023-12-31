@@ -44,6 +44,11 @@ export default function Dashboard() {
 
   const submitForm = async () => {
     try {
+      if (!uuid || !name) {
+        SetErrors("UUID and Name cannot be empty.");
+        return;
+      }
+
       const existingData = certificateData.find((item) => item.UUID === uuid);
 
       if (existingData) {
@@ -94,7 +99,7 @@ export default function Dashboard() {
       setCertificateData((prevData) =>
         prevData.filter((item) => item.id !== id),
       );
-      setDeleted(true);
+
       SetErrors("Item has been deleted.");
       console.log("Document successfully deleted!");
     } catch (error) {
@@ -131,7 +136,6 @@ export default function Dashboard() {
     setTimeout(() => {
       SetErrors("");
       setUpdate(false);
-      setDeleted(false);
     }, 10000);
   });
   return (
@@ -353,12 +357,16 @@ export default function Dashboard() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    updateCertificate(editingId, {
-                      UUID: updateUuid,
-                      Name: updateName,
-                    })
-                  }
+                  onClick={() => {
+                    if (!updateUuid || !updateName) {
+                      SetErrors("Field Cant Be Empty");
+                    } else {
+                      updateCertificate(editingId, {
+                        UUID: updateUuid,
+                        Name: updateName,
+                      });
+                    }
+                  }}
                   class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                   Update Certificate
                 </button>
@@ -406,7 +414,14 @@ export default function Dashboard() {
 
             <button
               type="button"
-              onClick={submitForm}
+              onClick={() => {
+                if (!uuid || !name) {
+                  SetErrors("UUID and Name cannot be empty.");
+                  return;
+                } else {
+                  submitForm();
+                }
+              }}
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
               Submit
             </button>
